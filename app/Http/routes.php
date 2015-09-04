@@ -20,4 +20,4 @@ Route::post('/notes/create', 'NoteController@create');
 Route::get('/notes/get', 'NoteController@get');
 Route::get('/notes/getAll', 'NoteController@getAll');
 Route::post('/notes/edit', 'NoteController@edit');
-Route::post('/notes/delte', 'NoteController@delete');
+Route::post('/notes/delete', 'NoteController@delete');

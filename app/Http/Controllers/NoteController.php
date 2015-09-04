@@ -51,13 +51,13 @@ class NoteController extends Controller
         if($validator->fails()){
             return response()->json(array('errors' => $validator->errors()));
         }
-        $this->_isOwner();
-        $note = Note::where('id', Input::get('id'))->first();
+        $userId = $this->_getUserId(Input::get('api_key'));
+        $note = Note::where('id', Input::get('id'))->where('user_id', $userId)->first();
         return response()->json(array('status' => 'successful', 'note' => $note));
     }
 
     public function edit(){
-        $validatr = Validator::make(Input::all(), array(
+        $validator = Validator::make(Input::all(), array(
             'id' => 'required|integer',
             'title' => 'required|max:50',
             'note' => 'required|max:1000',
@@ -80,9 +80,7 @@ class NoteController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
+     * Remove the specified resource from storage.     
      * @return Response
      */
     public function delete(){
@@ -115,26 +113,35 @@ class NoteController extends Controller
 
         $userId = $this->_getUserId(Input::get('api_key'));
         if($userId){
-            $notes = Note::where('user_id', $userId);
+            $notes = Note::where('user_id', $userId)->get();
             return response()->json(array('status' => 'successful', 'notes' => $notes));
         }
         return response()->json(array('status' => 'failed'));
     }
 
     private function _getUserId($apiKey){
-        $userId = User::where('api_key', $apiKey)->first()->fetch('id');
+        $user = User::where('api_key', $apiKey);
 
-        if($userId){
-            return $userId;
+        if($user){
+            $firstUser = $user->first();
+            if($firstUser){
+                $id = $firstUser->id;
+                if($id){
+                    return $id;
+                }
+            }
         }
 
         return response()->json(array('status' => 'failed'));
     }
     private function _isOwner(){
         $userId = $this->_getUserId(Input::get('api_key'));
+        if(!$userId){
+            response()->json(array('status' => 'failed'));
+        }
         $isOwner = Note::where('id', Input::get('id'))->where('user_id', $userId)->count();
         if(!$isOwner){
-            return repsonse()->json(array('status' => 'failed'));
+            return response()->json(array('status' => 'failed'));
         }
         return true;
     }
