@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Validator;
-use User;
-use Note;
+use App\User;
+use Input;
+use App\Note;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
