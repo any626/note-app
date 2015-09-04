@@ -14,3 +14,10 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+//notes
+Route::post('/notes/create', 'NoteController@create');
+Route::get('/notes/get', 'NoteController@get');
+Route::get('/notes/getAll', 'NoteController@getAll');
+Route::post('/notes/edit', 'NoteController@edit');
+Route::post('/notes/delte', 'NoteController@delete');
